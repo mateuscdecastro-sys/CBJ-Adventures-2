@@ -1,0 +1,25 @@
+
+name: Godot project validation
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Godot 4.3
+        run: |
+          wget -q https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip
+          unzip -q Godot_v4.3-stable_linux.x86_64.zip
+          chmod +x Godot_v4.3-stable_linux.x86_64
+
+      - name: Import assets
+        run: ./Godot_v4.3-stable_linux.x86_64 --headless --editor --path . --import --quit
+
+      - name: Run smoke test
+        run: ./Godot_v4.3-stable_linux.x86_64 --headless --path . --script res://tests/smoke_test.gd
